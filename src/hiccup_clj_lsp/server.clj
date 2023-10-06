@@ -32,7 +32,7 @@
    (let [log-ch (async/chan (async/sliding-buffer 20))
          server (lsp.io-server/stdio-server {:log-ch log-ch
                                              :trace-ch log-ch
-                                             :trace-level "verbose"})]
+                                             :trace-level "off"})]
      (start-server! server))))
 
 (defn log! [level args fmeta]
@@ -61,11 +61,14 @@
 
 (defmethod lsp.server/receive-notification "initialized" [_ _ _])
 
-(defmethod lsp.server/receive-notification "textDocument/didOpen" [_ _ _])
+(defmethod lsp.server/receive-notification "textDocument/didOpen" [_ _ {doc :text-document}]
+  (timbre/info (str "Document open " (:uri doc))))
 
-(defmethod lsp.server/receive-notification "textDocument/didChange" [_ _ _])
+(defmethod lsp.server/receive-notification "textDocument/didChange" [_ _ {doc :text-document}]
+  (timbre/info (str "Document change " (:uri doc))))
 
-(defmethod lsp.server/receive-notification "textDocument/didSave" [_ _ _])
+(defmethod lsp.server/receive-notification "textDocument/didSave" [_ _ {doc :text-document}]
+  (timbre/info (str "Document save " (:uri doc))))
 
 (defmethod lsp.server/receive-notification "textDocument/didClose" [_ _ _])
 
