@@ -12,6 +12,8 @@ For Emacs, add the following to your `init.el`:
 
 ```cl
 (use-package lsp-mode
+  ;; rest of lsp-mode configuration
+
   :config
   (add-to-list 'lsp-language-id-configuration
                '(clojure-mode . "clojure"))
