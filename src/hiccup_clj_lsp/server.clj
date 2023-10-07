@@ -1,19 +1,10 @@
 (ns hiccup-clj-lsp.server
   (:require [lsp4clj.server :as lsp.server]
             [lsp4clj.coercer :as coercer]
-            [clojure.java.io :as io]
             [clojure.core.async :as async]
             [lsp4clj.io-server :as lsp.io-server]
             [taoensso.timbre :as timbre]
-            [taoensso.timbre.appenders.core :as appenders]
             [hiccup-clj-lsp.handlers :as handlers]))
-
-(def log-file-name "/home/dvir/code/hiccup-clj-lsp/log.txt")
-(io/delete-file log-file-name :quiet)
-(timbre/refer-timbre)
-(timbre/merge-config! {:appenders {:println {:enabled? false}}})
-(timbre/merge-config! {:appenders {:spit (appenders/spit-appender {:fname log-file-name})}})
-(timbre/set-level! :debug)
 
 (defn- monitor-server-logs [log-ch]
   (async/go-loop []
@@ -61,16 +52,17 @@
 
 (defmethod lsp.server/receive-notification "initialized" [_ _ _])
 
-(defmethod lsp.server/receive-notification "textDocument/didOpen" [_ _ {doc :text-document}]
-  (timbre/info (str "Document open " (:uri doc))))
+(defmethod lsp.server/receive-notification "textDocument/didOpen" [_ _ params]
+  (handlers/did-open params))
 
-(defmethod lsp.server/receive-notification "textDocument/didChange" [_ _ {doc :text-document}]
-  (timbre/info (str "Document change " (:uri doc))))
+(defmethod lsp.server/receive-notification "textDocument/didChange" [_ _ params]
+  (handlers/did-change params))
 
-(defmethod lsp.server/receive-notification "textDocument/didSave" [_ _ {doc :text-document}]
-  (timbre/info (str "Document save " (:uri doc))))
+(defmethod lsp.server/receive-notification "textDocument/didSave" [_ _ params]
+  (handlers/did-save params))
 
-(defmethod lsp.server/receive-notification "textDocument/didClose" [_ _ _])
+(defmethod lsp.server/receive-notification "textDocument/didClose" [_ _ params]
+  (handlers/did-close params))
 
 (defn- exit [server]
   (timbre/info "Exiting...")
