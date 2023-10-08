@@ -44,7 +44,8 @@
 (defn capabilities []
   (conform-or-log
    ::coercer/server-capabilities
-   {:completion-provider {:resolve-provider true :trigger-characters [":"]}}))
+   {:text-document-sync :full
+    :completion-provider {:resolve-provider true :trigger-characters [":"]}}))
 
 (defmethod lsp.server/receive-request "initialize" [_ _ _]
   (timbre/info "Initializing...")

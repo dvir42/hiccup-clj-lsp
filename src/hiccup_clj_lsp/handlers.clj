@@ -8,8 +8,11 @@
     (timbre/info "Document open" uri)
     (db/upsert-file uri text)))
 
-(defn did-change [_]
-  (timbre/info "Document change"))
+(defn did-change [{:keys [text-document content-changes]}]
+  (let [{uri :uri} text-document
+        {text :text} (first content-changes)]
+    (timbre/info "Document change" uri)
+    (db/upsert-file uri text)))
 
 (defn did-save [{:keys [text-document text]}]
   (let [{uri :uri} text-document]
