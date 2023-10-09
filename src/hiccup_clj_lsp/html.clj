@@ -127,4 +127,4 @@
    :wbr []})
 
 (def html-elements
-  (update-vals incomplete-html-elements (fn [v] (conj v global-attributes))))
+  (update-vals incomplete-html-elements (fn [v] (concat v global-attributes))))
