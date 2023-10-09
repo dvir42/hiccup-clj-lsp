@@ -11,7 +11,7 @@
     (let [elements (string/join "|" (keys html/html-elements))]
       (re-find
        (re-pattern
-        (format "(?s)\\[(%s)(?=[\\s\\(\\{\\[,])[^}\\]]*?\\{[^}\\]]*$" elements)) a))
+        (format "(?s)\\[\\s*?(%s)(?=[\\s\\(\\{\\[,])[^}\\]]*?\\{[^}\\]]*$" elements)) a))
     (last a)
     (keyword (apply str (next a)))))
 
